@@ -1,0 +1,48 @@
+uses crt,graph;
+var gd,gm:integer;
+pal:palettetype;
+p:pointer;
+function loader(filename:string):pointer;
+var f:file;
+p:pointer;
+size:longint;
+begin
+  assign(f,filename);
+  reset(f,1);
+  size:=filesize(f);
+  getmem(p,size);
+  blockread(f,p^,size);
+  close(f);
+loader:=p;
+end;
+begin
+  gd:=detect;
+  initgraph(gd,gm,'');
+  getpalette(pal);
+  setrgbpalette(pal.colors[0],242,0,251);
+  setrgbpalette(pal.colors[15],50,50,50);
+  setrgbpalette(pal.colors[8],25,25,25);
+  setrgbpalette(pal.colors[9],0,0,60);
+  setrgbpalette(pal.colors[14],50,50,0);
+  setrgbpalette(pal.colors[13],0,0,0);
+  setrgbpalette(pal.colors[11],0,10,50);
+  p:=loader('image/zel4');
+  putimage(100,100,p^,0);
+  p:=loader('image/kirpiz');
+  putimage(100,120,p^,0);
+  putimage(110,120,p^,0);
+  putimage(90,120,p^,0);
+  putimage(120,120,p^,0);
+  putimage(120,100,p^,0);
+  putimage(120,90,p^,0);
+  p:=loader('image/zel1');
+  putimage(100+200,100,p^,0);
+  p:=loader('image/kirpiz');
+  putimage(100+200,120,p^,0);
+  putimage(110+200,120,p^,0);
+  putimage(90+200,120,p^,0);
+  putimage(120+200,120,p^,0);
+  putimage(120+200,100,p^,0);
+  putimage(120+200,90,p^,0);
+  readln;
+end.

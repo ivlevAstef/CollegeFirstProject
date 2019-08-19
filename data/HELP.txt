@@ -1,0 +1,30 @@
+[x/60][y/50][c/12]creator: Ivlev Aleksandr Evgenjevij
+[c/10]                     Help.
+[c/7] v igre est stenki:
+  [p/kirpiz][p/zeleso][p/zem][p/zem_tv][p/tv][p/kamen] 
+  tagze est verevka [p/ver], po kotoroi mosno lasit,
+  i lestniza[p/les].
+[c/4]est 3 vida orusia:
+  dinamit[p/oru1] ,raketniza[p/ORU2] ,usi[p/oru3]
+  s pomosu dinamita i raketnizi mosno rasbivat stenku takogo vida:[p/kamen]
+  k orusiu est patroni:
+  dla dinamita:[p/DINAMITV]
+  dla raketnizi:[p/raketav]
+  dla usi:[p/usiv]
+[c/7]tagze est dveri: 
+  otkrito:[p/dvo1][p/dvo2][p/dvo3][p/dvo4][p/dvo5][ry/10]
+  zakrito:[p/dvz1][p/dvz2][p/dvz3][p/dvz4][p/dvz5][ry/10]
+  k nim prilogautsa klusi:[p/kl1][p/kl2][p/kl3][p/kl4][p/kl5]
+[c/14]is urovna est vihod:
+  kogda on krasnii to viiti nelsa:[p/EXITO1][ry/10]
+  a kogda on zelenii to viiti mosno:[p/EXITO2][ry/10]
+  ztobi on stal selenim nado sobrat spesialnii kluzi:[p/exitok]
+  za kazdii kluz daut opit.
+  za kazdii levol dayt ozki na kotorii mozno ulizhiz zeloveka
+[c/13]est tagze vragi-[p/VR1], aptezka-[p/HEATPL]
+
+  kogda igraech idet vrema kogda udevaech vraga to vrema umenhaetca
+  posle togo kak ti prohol tebe pribovlaetca vrema 
+       v savisimosti ot tvoih zisnei
+  zem menche zisnei tem bolhe vremeni pribovlaetca
+[x/200][y/450][c/12] Zelay uspeha proiti

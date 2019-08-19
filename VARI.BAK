@@ -1,0 +1,89 @@
+unit vari;
+interface
+uses crt,graph,Dos;
+const
+  maxk=3;
+  cilakompa=1;
+  dlina=15;
+  n=10;
+  maxxxvvv=30;
+type krug=record
+vr,rad,ugl,ugx,ugy,rasm:integer;
+x,y,cv:array[1..dlina]of integer;
+end;
+type miska=record
+x,y,k:integer;
+end;
+type trecordi=record
+name:string;
+szet:real;
+end;
+type imena=record
+  s:array[1..47]of string;
+end;
+type nastroiki=record
+  gromkost,eee:integer;
+  versia:real;
+end;
+type save=record
+  uroven,den:integer;
+  armor,maxBegCten,skor_zel,max_visot,visot_pris,max_medl:integer;
+  opit,urovenopita,ozki,istoz:integer;
+end;
+type vragi=record
+  atak,povor,vr,zisn,x,y,vid,pol:integer;
+end;
+type zelovek=record
+  zisn,x,y:integer;
+  prised,stor,vid:shortint;
+  combo:array[1..10]of shortint;
+  name:string;
+  p:array[0..20]of pointer;
+end;
+type masiva=record
+  a:array[0..64,0..45]of integer;
+  x,y:integer;
+  ss:string;
+end;
+type vsego=record
+  vs:integer;
+end;
+type orusie=record
+  x,y,skor,vrema,kol,kol2:integer;
+  atakaplus:integer;
+  nkol:integer;
+  p:pointer;
+end;
+var
+  b:array[1..5]of orusie;
+  m:miska;
+  vss:vsego;
+  DirInfo:SearchRec;
+  vr:array[1..10]of vragi;
+  vrp:array[0..10]of pointer;
+  masiv:masiva;
+  imenaa:imena;
+  down,enter,prised,zamedlenie,up,left,right,dinamit,esc,probel:char;
+  kr:array[1..maxk]of krug;
+  rasgrom:array[1..10]of pointer;
+  sav:save;
+  nastroil:nastroiki;
+  menup:array[1..10]of pointer;
+  kar:array[0..30]of pointer;
+  klu:array[1..6]of boolean;
+  Dstoit:Shortint;
+  Pal:PaletteType;
+  medlenie:boolean;
+  f:file;
+  vremavr,maxBegCten,max_visot,max_medl,vrema_medl,zi1,zi2,priset,skor_vr,iex,jex,kol_klu,kol_vr:integer;
+  ikl,leftRight:shortint;
+  zikl,skor_zel,slot,dfg,vibori,x,y,i,j,uhvat,skor_pad,pered,visot_pris,vrema,visot:integer;
+  s:string;
+  ch:char;
+  zel:zelovek;
+  gd,gm:integer;
+  zas,min,sek,dopol:word;
+  opit,ozki,istoz,urovenopita:integer;
+implementation
+
+end.

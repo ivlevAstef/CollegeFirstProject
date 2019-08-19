@@ -1,0 +1,912 @@
+unit OpMen;
+interface
+uses crt,graph,vari,loaderi,igraa,recordi;
+procedure nasalmiska;
+procedure anim2(nomer:integer;mis:boolean);
+procedure anim(nomer:integer;mis:boolean);
+procedure ViKr(nomer,cv:integer);
+procedure glavanimmihki;
+function LeadingZero(w : Word) : String;
+procedure strel(n,x,y:integer);
+procedure riss(ch:char;x,y:integer);
+procedure opsii;
+procedure menu4;
+procedure menu3(load:integer);
+procedure menu2(cilakompa:shortint);
+procedure menu(cilakompa:shortint);
+implementation
+procedure nasalmiska;
+begin
+  resetmouse;
+  for i:=1 to 7 do setrgbpalette(pal.colors[i],62-i*5,0,62-i*5);
+  for i:=1 to 7 do kr[1].cv[i]:=i;
+  for j:=2 to maxk do
+  for i:=1 to 7 do kr[j].cv[i]:=i;
+  for i:=1 to dlina do kr[1].x[i]:=320;
+  for i:=1 to dlina do kr[1].y[i]:=240;
+  kr[2].rad:=15;
+  kr[3].rad:=15;
+  for i:=2 to maxk do begin
+  if(i mod 2=0)then kr[i].y[1]:=-kr[i].rad;
+  if(i mod 2=1)then kr[i].y[1]:=kr[i].rad;
+  if(i mod 2=0)then kr[i].x[1]:=-1;
+  if(i mod 2=1)then kr[i].x[1]:=1;
+  end;
+  for i:=2 to maxk do begin
+    if(i mod 2=0)then kr[i].ugl:=1;
+    if(i mod 2=1)then kr[i].ugl:=3;
+  end;
+  for i:=1 to maxk do
+   kr[i].rasm:=1;
+  setmouseposition(kr[1].x[1],kr[1].y[1]);
+  x:=0; y:=0;
+end;
+procedure ViKr(nomer,cv:integer);
+var ii:integer;
+begin
+    for ii:=dlina downto 1 do
+    begin
+      setcolor(kr[nomer].cv[ii div (dlina div 6)+1]*cv);
+      if(kr[nomer].rasm>0)then circle(kr[nomer].x[ii],kr[nomer].y[ii],kr[nomer].rasm);
+      putpixel(kr[nomer].x[ii],kr[nomer].y[ii],kr[nomer].cv[ii div (dlina div 6)+1]*cv);
+    end;
+end;
+procedure glavanimmihki;
+var hj:integer;
+begin
+GetMousePosition;
+    for hj:=2 to maxk do
+    begin
+    kr[hj].x[1]:=kr[hj].x[1]-x;
+    kr[hj].y[1]:=kr[hj].y[1]-y;
+    end;
+    for hj:=1 to maxk do
+    anim(hj,true);
+    x:=m.x;
+    y:=m.y;
+    for hj:=2 to maxk do
+    begin
+    kr[hj].x[1]:=kr[hj].x[1]+x;
+    kr[hj].y[1]:=kr[hj].y[1]+y;
+    end;
+    for hj:=1 to maxk do
+    anim2(hj,true);
+    for hj:=1 to maxk do
+    ViKr(hj,1);
+end;
+procedure anim2(nomer:integer;mis:boolean);
+var ii:integer;
+begin
+for ii:=dlina downto 2 do
+  begin
+    kr[nomer].x[ii]:=kr[nomer].x[ii-1];
+    kr[nomer].y[ii]:=kr[nomer].y[ii-1];
+  end;
+end;
+procedure anim(nomer:integer;mis:boolean);
+var ii,x1,y1,x2,y2,xp,yp,ipr:integer;
+begin
+  if(mis=true)and(nomer=1)then
+  begin
+  kr[nomer].x[1]:=m.x;
+  kr[nomer].y[1]:=m.y;
+  end;
+  if(nomer<>1)then
+  begin
+    if(kr[nomer].ugl=1)then
+    begin
+      kr[nomer].x[1]:=kr[nomer].x[1]+1;
+      kr[nomer].y[1]:=-round(sqrt(abs(sqr(kr[nomer].rad)-sqr(kr[nomer].x[1]))));
+    end;
+    if(kr[nomer].ugl=2)then
+    begin
+      kr[nomer].y[1]:=kr[nomer].y[1]+1;
+      kr[nomer].x[1]:=round(sqrt(abs(sqr(kr[nomer].rad)-sqr(kr[nomer].y[1]))));
+    end;
+    if(kr[nomer].ugl=3)then
+    begin
+      kr[nomer].x[1]:=kr[nomer].x[1]-1;
+      kr[nomer].y[1]:=round(sqrt(abs(sqr(kr[nomer].rad)-sqr(kr[nomer].x[1]))));
+    end;
+    if(kr[nomer].ugl=4)then
+    begin
+      kr[nomer].y[1]:=kr[nomer].y[1]-1;
+      kr[nomer].x[1]:=-round(sqrt(abs(sqr(kr[nomer].rad)-sqr(kr[nomer].y[1]))));
+    end;
+    if(kr[nomer].vr<=0)then
+    if(abs(kr[nomer].y[1])=abs(kr[nomer].x[1]))
+    or(abs(kr[nomer].y[1]-1)=abs(kr[nomer].x[1]))
+    or(abs(kr[nomer].y[1])=abs(kr[nomer].x[1]-1))
+    or(abs(kr[nomer].y[1]-2)=abs(kr[nomer].x[1]))
+    or(abs(kr[nomer].y[1])=abs(kr[nomer].x[1]-2))
+    or(abs(kr[nomer].y[1]-3)=abs(kr[nomer].x[1]))
+    or(abs(kr[nomer].y[1])=abs(kr[nomer].x[1]-3))
+    then begin
+    kr[nomer].ugl:=kr[nomer].ugl+1;
+    kr[nomer].vr:=kr[nomer].rad;
+    end;
+    kr[nomer].vr:=kr[nomer].vr-1;
+    if kr[nomer].ugl>4 then kr[nomer].ugl:=1;
+  end;
+  if(kr[nomer].x[1]>630)then kr[nomer].ugx:=-kr[nomer].ugx;
+  if(kr[nomer].x[1]<10)then kr[nomer].ugx:=-kr[nomer].ugx;
+  if(kr[nomer].y[1]>470)then kr[nomer].ugy:=-kr[nomer].ugy;
+  if(kr[nomer].y[1]<10)then kr[nomer].ugy:=-kr[nomer].ugy;
+end;
+function LeadingZero(w : Word) : String;
+var
+  s : String;
+begin
+  Str(w:0,s);
+  if Length(s) = 1 then
+    s := '0' + s;
+  LeadingZero := s;
+end;
+procedure strel(n,x,y:integer);
+begin
+ if(n=1)then begin
+   line(x+30,y+4,x+30,y+17);
+   Ellipse(x+30,y+10,180,360,3,8); end;
+ if(n=2)then begin
+   line(x+30,y+4,x+30,y+17);
+   Ellipse(x+30,y+11,0,180,3,8); end;
+ if(n=3)then begin
+   line(x+15,y+10,x+33,y+10);
+   Ellipse(x+22,y+10,90,270,8,3); end;
+ if(n=4)then begin
+   line(x+15,y+10,x+33,y+10);
+   Ellipse(x+26,y+10,270,360+90,8,3); end;
+end;
+procedure riss(ch:char;x,y:integer);
+begin
+  if(ch=#80)then strel(1,x-10,y-3)
+  else if(ch=#72)then strel(2,x-10,y-3)
+  else if(ch=#75)then strel(3,x-10,y)
+  else if(ch=#77)then strel(4,x-10,y)
+  else if(ch=#13)then outtextxy(x+55,y+1,'enter')
+  else if(ch=#9)then outtextxy(x+30,y+1,'tab')
+  else if(ch=#32)then outtextxy(x+55,y+1,'spase')
+  else if(ch=#27)then outtextxy(x+30,y+1,'esc')
+  else outtextxy(x+2,y+1,ch);
+end;
+procedure opsii;
+var vibor:integer;
+code,nomeer:integer;
+s:string;
+isme:boolean;
+begin
+  SetTextJustify(2,2);
+  settextstyle(0,0,2);
+  repeat
+    glavanimmihki;
+    if(m.x>310)and(m.x<400)and(m.k=1)then
+    begin
+      if(m.y>8)and(m.y<=208)then
+      begin
+        ch:=readkey;
+        if(ch=#0)then ch:=readkey;
+        if(m.y>8)and(m.y<=28)then left:=ch;
+        if(m.y>28)and(m.y<=48)then right:=ch;
+        if(m.y>48)and(m.y<=68)then up:=ch;
+        if(m.y>68)and(m.y<=88)then down:=ch;
+        if(m.y>88)and(m.y<=108)then enter:=ch;
+        if(m.y>108)and(m.y<=128)then prised:=ch;
+        if(m.y>128)and(m.y<=148)then zamedlenie:=ch;
+        if(m.y>148)and(m.y<=168)then dinamit:=ch;
+        if(m.y>168)and(m.y<=188)then esc:=ch;
+        if(m.y>188)and(m.y<=208)then probel:=ch;
+        cleardevice;
+      end;
+    end;
+    setcolor(15);
+    outtextxy(300,10,'left:');riss(left,340,10);
+    outtextxy(300,30,'right:');riss(right,340,30);
+    outtextxy(300,50,'up:');riss(up,340,50);
+    outtextxy(300,70,'down:');riss(down,340,70);
+    outtextxy(300,90,'deistvie:');riss(enter,340,90);
+    outtextxy(300,110,'prised:');riss(prised,340,110);
+    outtextxy(300,130,'zamedlenie:');riss(zamedlenie,340,130);
+    outtextxy(300,150,'vistrel:');riss(dinamit,340,150);
+    outtextxy(300,170,'nasad:');riss(esc,340,170);
+    outtextxy(300,190,'prisok:');riss(probel,340,190);
+    for i:=1 to 10 do
+    rectangle(310,i*20-12,400,i*20+8);
+  until keypressed;
+  SetTextJustify(1,1);
+end;
+procedure menu4;
+var strin:string;
+kkk,vibor:shortint;
+begin
+  cleardevice;
+  sagruska_karti(sav.uroven);
+  vibor:=1;
+  SetTextJustify(1,1);
+  settextstyle(0,0,1);
+  setcolor(10);
+  str(sav.skor_zel,s);
+  outtextxy(320,220,'skorost zeloveka(trebuetsa 3 ozka)');outtextxy(550,220,'rasvitie- '+s);
+  str(sav.max_visot,s);
+  outtextxy(320,240,'visota padenia bez poteri zisnei');outtextxy(550,240,'rasvitie- '+s);
+  str(sav.visot_pris,s);
+  outtextxy(320,260,'visota priska');outtextxy(550,260,'rasvitie- '+s);
+  str(sav.max_medl,s);
+  outtextxy(320,280,'max vrema samedlenie');outtextxy(550,280,'rasvitie- '+s);
+  str(sav.armor,s);
+  if(sav.uroven>kkk)then outtextxy(320,300,'armor- '+s);
+  str(b[1].atakaplus+20,s);
+  if(sav.uroven>kkk)then outtextxy(320,320,'ataka dinamita- '+s);
+  str(b[2].atakaplus+5,s);
+  if(sav.uroven>kkk)then outtextxy(320,340,'ataka raketnizi- '+s);
+  str(b[3].atakaplus+1,s);
+  if(sav.uroven>kkk)then outtextxy(320,360,'ataka usi- '+s);
+  setcolor(12);
+  str(sav.maxbegcten,s);
+  outtextxy(320,200,'visota bega po stene');outtextxy(550,200,'rasvitie- '+s);
+  repeat
+    kkk:=3;
+    SetTextJustify(1,1);
+    settextstyle(0,0,2);
+    setcolor(12);
+    outtextxy(320,50,'LEVEL');
+    str(sav.uroven,strin);
+    outtextxy(320,100,strin);
+    settextstyle(0,0,1);
+    outtextxy(320,150,masiv.ss);
+    outtextxy(400,100,zel.name);
+    setcolor(10);
+    str(sav.urovenopita,s);
+    outtextxy(320,450,'vah uroven- '+s);
+    str(sav.ozki,s);
+    outtextxy(320,400,'u vas ozkov- '+s);
+    str(sav.istoz,s);
+    outtextxy(320,420,'iz nih istrazeno- '+s);
+    ch:=readkey;
+    cleardevice;
+    str(sav.maxbegcten,s);
+    outtextxy(320,200,'visota bega po stene');outtextxy(550,200,'rasvitie- '+s);
+    str(sav.skor_zel,s);
+    outtextxy(320,220,'skorost zeloveka(trebuetsa 3 ozka)');outtextxy(550,220,'rasvitie- '+s);
+    str(sav.max_visot,s);
+    outtextxy(320,240,'visota padenia bez poteri zisnei');outtextxy(550,240,'rasvitie- '+s);
+    str(sav.visot_pris,s);
+    outtextxy(320,260,'visota priska');outtextxy(550,260,'rasvitie- '+s);
+    str(sav.max_medl,s);
+    outtextxy(320,280,'max vrema samedlenie');outtextxy(550,280,'rasvitie- '+s);
+    str(sav.armor,s);
+    if(sav.uroven>kkk)then outtextxy(320,300,'armor- '+s);
+    str(b[1].atakaplus+20,s);
+    if(sav.uroven>kkk)then outtextxy(320,320,'ataka dinamita- '+s);
+    str(b[2].atakaplus+5,s);
+    if(sav.uroven>kkk)then outtextxy(320,340,'ataka raketnizi- '+s);
+    str(b[3].atakaplus+1,s);
+    if(sav.uroven>kkk)then outtextxy(320,360,'ataka usi- '+s);
+    if ch=#0 then ch:=readkey;
+    if(ch=up)then  if(vibor>1)then vibor:=vibor-1;
+    if(ch=down)then  if(vibor<9)and(sav.uroven>kkk)or(vibor<5)and(sav.uroven>kkk)then vibor:=vibor+1;
+    if(ch=probel)and(sav.ozki>sav.istoz)then
+    begin
+      if(vibor=1)and(sav.maxbegcten<40)or(vibor=3)and(sav.max_visot<50)
+      or(vibor=4)and(sav.visot_pris<16)or(vibor=5)and(sav.max_medl<100)then sav.istoz:=sav.istoz+1;
+      if(vibor=1)and(sav.maxbegcten<40)then sav.maxbegcten:=sav.maxbegcten+2;
+    if(vibor=2)and(sav.skor_zel<3)and(sav.ozki>sav.istoz+2)then begin sav.skor_zel:=sav.skor_zel+1;sav.istoz:=sav.istoz+3;end;
+      if(vibor=3)and(sav.max_visot<50)then sav.max_visot:=sav.max_visot+2;
+      if(vibor=4)and(sav.visot_pris<16)then sav.visot_pris:=sav.visot_pris+1;
+      if(vibor=5)and(sav.max_medl<100)then sav.max_medl:=sav.max_medl+10;
+      if(sav.armor<5)and(vibor=6)or(b[1].atakaplus<50)and(vibor=7)or(b[2].atakaplus<20)and(vibor=8)then sav.istoz:=sav.istoz+1;
+      if(sav.armor<5)and(vibor=6)then sav.armor:=sav.armor+1;
+      str(b[1].atakaplus+20,s);
+      if(b[1].atakaplus<50)and(vibor=7)then b[1].atakaplus:=b[1].atakaplus+2;
+      if(b[2].atakaplus<20)and(vibor=8)then b[2].atakaplus:=b[2].atakaplus+1;
+      if(b[3].atakaplus<5)and(sav.ozki>sav.istoz+1)and(vibor=9)then begin
+      b[3].atakaplus:=b[3].atakaplus+1;sav.istoz:=sav.istoz+2; end;
+    end;
+    setcolor(12);
+    str(sav.maxbegcten,s);
+    if(vibor=1)then begin outtextxy(320,200,'visota bega po stene');outtextxy(550,200,'rasvitie- '+s); end;
+    str(sav.skor_zel,s);
+    if(vibor=2)then begin  outtextxy(320,220,'skorost zeloveka(trebuetsa 3 ozka)');outtextxy(550,220,'rasvitie- '+s); end;
+    str(sav.max_visot,s);
+    if(vibor=3)then begin  outtextxy(320,240,'visota padenia bez poteri zisnei');outtextxy(550,240,'rasvitie- '+s); end;
+    str(sav.visot_pris,s);
+    if(vibor=4)then begin  outtextxy(320,260,'visota priska');outtextxy(550,260,'rasvitie- '+s); end;
+    str(sav.max_medl,s);
+    if(vibor=5)then begin  outtextxy(320,280,'max vrema samedlenie');outtextxy(550,280,'rasvitie- '+s); end;
+    str(sav.armor,s);
+    if(sav.uroven>kkk)and(vibor=6)then outtextxy(320,300,'armor- '+s);
+    str(b[1].atakaplus+20,s);
+    if(sav.uroven>kkk)and(vibor=7)then outtextxy(320,320,'ataka dinamita- '+s);
+    str(b[2].atakaplus+5,s);
+    if(sav.uroven>kkk)and(vibor=8)then outtextxy(320,340,'ataka raketnizi- '+s);
+    str(b[3].atakaplus+1,s);
+    if(sav.uroven>kkk)and(vibor=9)then outtextxy(320,360,'ataka usi- '+s);
+    if(ch=enter)then
+    begin
+      maxBegCten:=sav.maxBegCten;
+      skor_zel:=sav.skor_zel;
+      max_visot:=sav.max_visot;
+      visot_pris:=sav.visot_pris;
+      max_medl:=sav.max_medl;
+      opit:=sav.opit;
+      urovenopita:=sav.urovenopita;
+      ozki:=sav.ozki;
+      istoz:=sav.istoz;
+      load_1_save(slot);
+      sav.maxBegCten:=maxBegCten;
+      sav.skor_zel:=skor_zel;
+      sav.max_visot:=max_visot;
+      sav.visot_pris:=visot_pris;
+      sav.max_medl:=max_medl;
+      sav.opit:=opit;
+      sav.urovenopita:=urovenopita;
+      sav.ozki:=ozki;
+      sav.istoz:=istoz;
+      dani_kart_kol_load;
+      if(sav.uroven>vss.vs)then outtextxy(100,400,'no more');
+      if(sav.uroven<=vss.vs)then
+      begin
+        kol_vr:=0;
+        kar[9]:=loader('data/image/exito1');
+        kol_klu:=0;
+        cleardevice;
+        for i:=1 to 3 do
+        begin
+        {b[i].kol:=0;b[i].kol2:=0;}
+        b[i].nkol:=b[i].kol;
+         b[i].x:=-100;b[i].y:=-100;
+        end;
+        kar[19]:=loader('data/image/dvz1');
+        kar[20]:=loader('data/image/dvz2');
+        kar[21]:=loader('data/image/dvz3');
+        kar[22]:=loader('data/image/dvz4');
+        kar[23]:=loader('data/image/dvz5');
+        for i:=1 to 5 do
+          klu[i]:=false;
+        for j:=0 to 45 do
+          for i:=0 to 64 do
+          begin
+            setfillstyle(1,12);
+            x:=i*10;
+            y:=j*10+40;
+            IF(masiv.a[i][j]<=-1)then
+            begin
+              kol_vr:=kol_vr+1;
+              vr[kol_vr].x:=i*10;
+              vr[kol_vr].y:=j*10+40;
+              vr[kol_vr].povor:=1;
+              vr[kol_vr].zisn:={abs(5*masiv.a[i][j])}5;
+              vr[kol_vr].vid:=abs(masiv.a[i][j]);
+              vr[kol_vr].vr:=30;
+              vr[kol_vr].atak:=abs(masiv.a[i][j]);
+              masiv.a[i][j]:=0;
+            end;
+            if(masiv.a[i][j]=10)then kol_klu:=kol_klu+1;
+            if(masiv.a[i][j]=9)then iex:=i;
+            if(masiv.a[i][j]=9)then jex:=j;
+            if(masiv.a[i][j]>0)and(masiv.a[i][j]<256)then putimage(x,y,kar[masiv.a[i][j]]^,0);
+          end;
+        for i:=1 to 3 do b[i].vrema:=0;
+        vrema:=0;
+        visot:=0;
+        pered:=0;
+        uhvat:=0;
+        zel.x:=masiv.x;
+        zel.y:=masiv.y;
+        zel.stor:=0;
+        putimage(zel.x,zel.y,zel.p[0]^,1);
+        for i:=1 to kol_vr do
+          putimage(vr[i].x,vr[i].y,vrp[1]^,1);
+        zel.zisn:=100;
+        putimage(2,5,menup[1]^,0);
+        putimage(120,5,menup[2]^,0);
+        putimage(220,5,menup[3]^,0);
+        Dstoit:=1;
+        for j:=121 to b[dstoit].kol+121 do
+          for i:=5 to 26 do
+          begin
+            if(getpixel(j,i)=6)then putpixel(j,i,10);
+          end;
+        setcolor(7);
+        for i:=6 to 25 do
+          line(245+20,i,round(220+max_medl/2),i);
+        setcolor(9);
+        line(245+20,5,round(220+max_medl/2),5);
+        line(245+20,25,round(220+max_medl/2),25);
+        line(220+round(max_medl/2),5,round(220+max_medl/2),25);
+        vrema_medl:=max_medl;
+        for j:=200 to 220+round(max_medl/2) do
+          for i:=5 to 26 do
+          begin
+            if(getpixel(j,i)=7)then putpixel(j,i,10);
+          end;
+        medlenie:=false;
+        vrema_medl:=max_medl;
+        for j:=13 to zel.zisn+13 do
+          for i:=5 to 26 do
+          begin
+            if(getpixel(j,i)=14)then putpixel(j,i,9);
+          end;
+        menup[4]:=loader('data/image/oru1');
+        putimage(185,10,menup[4]^,1);
+        igra(sav.uroven);
+        for i:=1 to 3 do b[i].kol:=b[i].nkol;
+        Save_save_igri(2);
+        sagruska_karti(sav.uroven);
+        SetTextJustify(1,1);
+        settextstyle(0,0,1);
+        setcolor(12);
+        outtextxy(320,150,masiv.ss);
+        ch:=']';
+        cleardevice;
+        setcolor(10);
+        str(sav.skor_zel,s);
+        outtextxy(320,220,'skorost zeloveka(trebuetsa 3 ozka)');outtextxy(550,220,'rasvitie- '+s);
+        str(sav.max_visot,s);
+        outtextxy(320,240,'visota padenia bez poteri zisnei');outtextxy(550,240,'rasvitie- '+s);
+        str(sav.visot_pris,s);
+        outtextxy(320,260,'visota priska');outtextxy(550,260,'rasvitie- '+s);
+        str(sav.max_medl,s);
+        outtextxy(320,280,'max vrema samedlenie');outtextxy(550,280,'rasvitie- '+s);
+        if(sav.uroven>kkk)then outtextxy(320,300,'armor- '+s);
+        str(b[1].atakaplus+20,s);
+        if(sav.uroven>kkk)then outtextxy(320,320,'ataka dinamita- '+s);
+        str(b[2].atakaplus+5,s);
+        if(sav.uroven>kkk)then outtextxy(320,340,'ataka raketnizi- '+s);
+        str(b[3].atakaplus+1,s);
+        if(sav.uroven>kkk)then outtextxy(320,360,'ataka usi- '+s);
+        setcolor(12);
+        str(sav.maxbegcten,s);
+        outtextxy(320,200,'visota bega po stene');outtextxy(550,200,'rasvitie- '+s);
+        vibor:=1;
+      end;
+    end;
+  until (ch=esc);
+end;
+procedure menu3(load:integer);
+var dfg2:integer;
+begin
+  if(load=1)then
+  begin
+    load_save_igri;
+    setcolor(12);
+    settextstyle(0,0,2);
+    outtextxy(100,100,'press name');
+    zel.name:='';
+    repeat
+      ch:='[';
+      setcolor(10);
+      outtextxy(100,200,zel.name);
+      ch:=readkey;
+      if ch=#0 then ch:=readkey;
+      setcolor(0);
+      outtextxy(300,400,'name already exists');
+      if(ch=#8)then
+      begin
+        delete(zel.name,length(zel.name),1);
+        setfillstyle(1,0);
+        bar(100,200,500,240);
+        outtextxy(100,200,zel.name);
+      end;
+      if(ch=enter)then
+      begin
+        dfg2:=0;
+        for i:=1 to 46 do
+          if(zel.name=imenaa.s[i])then dfg2:=1;
+        if(dfg2=1)then
+        begin
+          setcolor(12);
+          outtextxy(300,400,'name already exists');
+          setcolor(0);
+          outtextxy(100,200,zel.name);
+          zel.name:='';
+          ch:='}';
+        end;
+      end;
+      if(ch<>enter)and(ch<>#8)then
+      begin
+        if(dfg2<>1)then
+        begin
+          zel.name:=zel.name+ch;
+          setcolor(10);
+          outtextxy(100,200,zel.name);
+        end;
+        dfg2:=0;
+      end;
+    until ch=enter;
+    sagruska_karti(1);
+    Dstoit:=1;
+    b[Dstoit].kol:=0;
+    b[Dstoit].kol2:=0;
+    Dstoit:=2;
+    b[Dstoit].kol:=0;
+    b[Dstoit].kol2:=0;
+    zel.x:=masiv.x;
+    zel.y:=masiv.y;
+    sav.uroven:=1;
+    sav.den:=100;
+    zel.zisn:=100;
+    Save_save_igri(1);
+  end;
+  cleardevice;
+  if(dfg=1)then menu4;
+end;
+procedure menu2(cilakompa:shortint);
+var hj,exito,r,g,b:integer;
+begin
+  cleardevice;
+  exito:=2;
+  {vibor:=1;
+  {kx1:=50;{100,80}
+  {kx2:=50;{100,240}
+  {kx3:=50;{100,400}
+  setrgbpalette(pal.colors[12],0,30,0);
+  setrgbpalette(pal.colors[13],0,0,30);
+  setrgbpalette(pal.colors[14],30,0,0);
+  r:=random(60);
+  g:=random(60);
+  b:=random(60);
+  repeat
+    glavanimmihki;
+    setcolor(12);
+    outtextxy(120,100,'New');
+    setcolor(13);
+    outtextxy(320,250,'Load');
+    setcolor(14);
+    outtextxy(520,400,'Nasad');
+    setrgbpalette(pal.colors[15],r,g,b);
+    r:=r+1;
+    g:=g+1;
+    b:=b+1;
+    if(r>60)then r:=random(40)+10;
+    if(g>60)then g:=random(40)+10;
+    if(b>60)then b:=random(40)+10;
+    setcolor(15);
+    line(0,0,639,0);
+    line(0,0,0,479);
+    line(0,479,639,479);
+    line(639,0,639,479);{}
+    line(90,0,90,640);
+    line(150,0,150,640);
+    line(0,90,240,90);
+    line(0,120,240,120);{}
+    line(280,0,280,640);
+    line(360,0,360,640);
+    line(0,240,430,240);
+    line(0,270,430,270);{}
+    line(470,0,470,640);
+    line(570,0,570,640);
+    line(190,390,640,390);
+    line(190,420,640,420);
+    if(m.x>=90)and(m.x<=150)and(m.y>=90)and(m.y<=120)then
+    begin
+      if(cilakompa=1)then begin
+      setrgbpalette(pal.colors[12],0,60,0);
+      setrgbpalette(pal.colors[13],0,0,30);
+      setrgbpalette(pal.colors[14],30,0,0);
+      for i:=1 to 7 do setrgbpalette(pal.colors[i],42-i*2,65-i*6,42-i*2); end;
+      SetTextJustify(0,2);
+      if(m.k=1)then
+      begin
+        cleardevice;
+        initgraph(gd,gm,'');
+        menu3(1);
+        nasalmiska;
+        cleardevice;
+        setrgbpalette(pal.colors[14],30,0,0);
+        setrgbpalette(pal.colors[13],0,0,30);
+        setrgbpalette(pal.colors[12],0,30,0);
+        setrgbpalette(pal.colors[11],0,30,30);
+        setrgbpalette(pal.colors[10],30,30,0);
+      end;
+      SetTextJustify(1,1);
+      settextstyle(4,0,4);
+    end else
+    if(m.x>=280)and(m.x<=360)and(m.y>=240)and(m.y<=270)then
+    begin
+      if(cilakompa=1)then begin
+      setrgbpalette(pal.colors[12],0,30,0);
+      setrgbpalette(pal.colors[13],0,0,60);
+      setrgbpalette(pal.colors[14],30,0,0);
+      for i:=1 to 7 do setrgbpalette(pal.colors[i],62-i*5,0,62-i*2); end;
+      if(m.k=1)then
+      begin
+        SetTextJustify(0,2);
+        initgraph(gd,gm,'');
+        load_save_igri;
+        vibor_load(2);
+        if(dfg=1)then
+        begin
+          load_1_save(vibori);
+          cleardevice;
+          menu3(2);
+        end;
+        setrgbpalette(pal.colors[14],30,0,0);
+        setrgbpalette(pal.colors[13],0,0,30);
+        setrgbpalette(pal.colors[12],0,30,0);
+        setrgbpalette(pal.colors[11],0,30,30);
+        setrgbpalette(pal.colors[10],30,30,0);
+        SetTextJustify(1,1);
+        settextstyle(4,0,4);
+        nasalmiska;
+        cleardevice;
+        exito:=2;
+      end;
+    end else
+    if(m.x>=470)and(m.x<=570)and(m.y>=390)and(m.y<=420)then
+    begin
+      if(cilakompa=1)then begin
+      setrgbpalette(pal.colors[12],0,30,0);
+      setrgbpalette(pal.colors[13],0,0,30);
+      setrgbpalette(pal.colors[14],60,0,0);
+      for i:=1 to 7 do setrgbpalette(pal.colors[i],62-i*2,0,62-i*5); end;
+      if(m.k=1)then exito:=1;
+    end else
+    begin
+      if(cilakompa=1)then begin
+      setrgbpalette(pal.colors[12],0,30,0);
+      setrgbpalette(pal.colors[13],0,0,30);
+      setrgbpalette(pal.colors[14],30,0,0);
+      for i:=1 to 7 do setrgbpalette(pal.colors[i],62-i*5,0,62-i*5); end;
+    end;
+    for hj:=1 to maxk do
+    ViKr(hj,0);
+  until exito=1;
+  cleardevice;
+end;
+procedure tabrekord;
+var nomeer,code:integer;
+isme:boolean;
+begin
+  cleardevice;
+  nomeer:=1;
+  isme:=true;
+  repeat
+    str(nomeer,s);
+    if isme then begin
+      vivod('data/recordi/ur'+s,12,70);
+      str(nomeer,s);
+      outtextxy(10*nomeer+10,10,s);
+    end;
+    isme:=false;
+    ch:=readkey;
+    if(ch>='1')and(ch<='4')then
+    begin
+      isme:=true;
+      val(ch,nomeer,code);
+      cleardevice;
+    end;
+  until ch=esc;
+  delay(10000);
+  cleardevice;
+end;
+procedure help(name:string);
+var F:text;
+s:string;
+cv,code:integer;
+sim:char;
+pointeri:pointer;
+yr,y,x:integer;
+begin
+  initgraph(gd,gm,'');
+  assign(f,name);
+  reset(f);
+  x:=10;
+  y:=10;
+  yr:=10;
+  setcolor(15);
+  SetTextJustify(0,2);
+  settextstyle(0,0,1);
+  while not (eof(f)) do
+  begin
+    read(f,sim);
+    if(sim<>#13)and(sim<>'[')then outtextxy(x,y,sim);
+    if(sim='[')then
+    begin
+      s:='';
+      repeat
+          read(f,sim);
+          if(sim<>'/')then s:=s+sim;
+      until sim='/';
+      if(s='p')then
+      begin
+        s:='';
+        repeat
+          read(f,sim);
+          if(sim<>']')then s:=s+sim;
+        until sim=']';
+        pointeri:=loader('data/image/'+s);
+        putimage(x,y,pointeri^,0);
+        x:=x+3;
+      end;
+      if(s='rx')then
+      begin
+        s:='';
+        repeat
+          read(f,sim);
+          if(sim<>']')then s:=s+sim;
+        until sim=']';
+        val(s,cv,code);
+        if(code=0)then x:=x+cv;
+      end;
+      if(s='ry')then
+      begin
+        s:='';
+        repeat
+          read(f,sim);
+          if(sim<>']')then s:=s+sim;
+        until sim=']';
+        val(s,cv,code);
+        if(code=0)then y:=y+cv;
+      end;
+      if(s='x')then
+      begin
+        s:='';
+        repeat
+          read(f,sim);
+          if(sim<>']')then s:=s+sim;
+        until sim=']';
+        val(s,cv,code);
+        if(code=0)then x:=cv;
+      end;
+      if(s='y')then
+      begin
+        s:='';
+        repeat
+          read(f,sim);
+          if(sim<>']')then s:=s+sim;
+        until sim=']';
+        val(s,cv,code);
+        if(code=0)then y:=cv;
+      end;
+      if(s='c')then
+      begin
+        s:='';
+        repeat
+          read(f,sim);
+          if(sim<>']')then s:=s+sim;
+        until sim=']';
+        val(s,cv,code);
+        if(code=0)then setcolor(cv);
+      end;
+    end;
+    x:=x+8;
+    if(sim=#13)then y:=y+yr;
+    if(sim=#13)then x:=10;
+  end;
+  setfillstyle(1,0);
+  bar(0,19,18,480);
+  close(f);
+  SetTextJustify(1,1);
+  settextstyle(4,0,4);
+  readln;
+  nasalmiska;
+setrgbpalette(pal.colors[14],30,0,0);
+setrgbpalette(pal.colors[13],0,0,30);
+setrgbpalette(pal.colors[12],0,30,0);
+setrgbpalette(pal.colors[11],0,30,30);
+setrgbpalette(pal.colors[10],30,30,0);
+end;
+procedure menu(cilakompa:shortint);
+var hj:integer;
+kx,ky:real;
+r,g,b:integer;
+begin
+nasalmiska;
+resetmouse;
+SetTextJustify(1,1);
+settextstyle(4,0,4);
+setrgbpalette(pal.colors[15],30,0,30);
+randomize;
+r:=random(60);
+g:=random(60);
+b:=random(60);
+setrgbpalette(pal.colors[14],30,0,0);
+setrgbpalette(pal.colors[13],0,0,30);
+setrgbpalette(pal.colors[12],0,30,0);
+setrgbpalette(pal.colors[11],0,30,30);
+setrgbpalette(pal.colors[10],30,30,0);
+repeat
+  if keypressed then ch:=readkey;
+  setrgbpalette(pal.colors[15],r,g,b);
+  r:=r+1;
+  g:=g+1;
+  b:=b+1;
+  if(r>60)then r:=random(40)+10;
+  if(g>60)then g:=random(40)+10;
+  if(b>60)then b:=random(40)+10;
+  if(cilakompa=1)then begin
+  setrgbpalette(pal.colors[14],30,0,0);
+  setrgbpalette(pal.colors[13],0,0,30);
+  setrgbpalette(pal.colors[12],0,30,0);
+  setrgbpalette(pal.colors[11],0,30,30);
+  setrgbpalette(pal.colors[10],30,30,0); end;
+  if(m.y>=240)and(m.y<=280)then
+  begin
+    if(m.x<260)then
+    begin
+      if(cilakompa=1)then begin
+      setrgbpalette(pal.colors[11],0,60,60);
+      for i:=1 to 7 do setrgbpalette(pal.colors[i],i*7,62-i*7,60); end;
+      if(m.k=1)then
+      begin
+        cleardevice;
+        help('data/help.txt');
+        nasalmiska;
+        cleardevice;
+      end;
+    end else
+    if(m.x>=260)and(m.x<=380)then begin
+      if m.k=1 then
+          begin
+            cleardevice;
+            nosound;
+            opsii;
+            cleardevice;
+            SetTextJustify(1,1);
+            settextstyle(4,0,4);
+          end;
+       if(cilakompa=1)then begin
+     setrgbpalette(pal.colors[13],0,0,60);
+    for i:=1 to 7 do setrgbpalette(pal.colors[i],62-i*5,0,62-i*2);end; end
+    else if(m.x>380)then
+    begin
+      if(cilakompa=1)then begin
+      setrgbpalette(pal.colors[10],60,60,0);
+      for i:=1 to 7 do setrgbpalette(pal.colors[i],60,62-i*6,i*6); end;
+      if(m.k=1)then
+      begin
+        tabrekord;
+        settextstyle(4,0,4);
+      end;
+    end;
+  end else
+  if(m.x>=260)and(m.x<=380)then
+  begin
+    if(m.y>=90)and(m.y<=130)then begin
+      if m.k=1 then
+          begin
+            cleardevice;
+            nosound;
+            menu2(cilakompa);
+            cleardevice;
+          end;
+      if(cilakompa=1)then begin
+      setrgbpalette(pal.colors[12],0,60,0);
+      for i:=1 to 7 do setrgbpalette(pal.colors[i],42-i*2,65-i*6,42-i*2);end;end
+  else if(m.y>=390)and(m.y<=430)then begin
+      if m.k=1 then exit;
+      if(cilakompa=1)then begin
+      setrgbpalette(pal.colors[14],60,0,0);
+      for i:=1 to 7 do setrgbpalette(pal.colors[i],62-i*2,0,62-i*5);end; end
+  else if(cilakompa=1)then for i:=1 to 7 do setrgbpalette(pal.colors[i],62-i*5,0,62-i*5);
+end
+else if(cilakompa=1)then for i:=1 to 7 do setrgbpalette(pal.colors[i],62-i*5,0,62-i*5);
+delay(0);
+setcolor(15);
+  line(0,0,639,0);
+  line(0,0,0,479);
+  line(0,479,639,479);
+  line(639,0,639,479);
+  line(0,90,640,90);
+  line(0,240,640,240);
+  line(0,390,640,390);
+  line(0,130,640,130);
+  line(0,280,640,280);
+  line(0,430,640,430);
+  line(260,0,260,480);
+  line(380,0,380,480);
+  setcolor(12);
+outtextxy(320,100,'Igra');
+setcolor(13);
+outtextxy(320,250,'Options');
+setcolor(11);
+outtextxy(130,250,'Help');
+setcolor(10);
+outtextxy(320+170,250,'Recordi');
+setcolor(14);
+outtextxy(320,400,'Exit');
+glavanimmihki;
+until 1=2;
+SetTextJustify(0,2);
+end;
+end.
